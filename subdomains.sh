@@ -29,7 +29,7 @@ tr '<BR>' '\n' < /tmp/$1/results1.tmp > /tmp/$1/results2.tmp
 #remove blank lines
 sed -i '/^$/d' /tmp/$1/results2.tmp
 #remove odd ^M chars causing failure of removal of duplicates
-sed 's/\r//' < /tmp/ablo.live/results2.tmp > /tmp/ablo.live/results3.tmp
+sed 's/\r//' < /tmp/$1/results2.tmp > /tmp/$1/results3.tmp
 #remove duplicates
 awk '!a[$0]++' /tmp/$1/results3.tmp > /tmp/$1/subdomains.txt
 
