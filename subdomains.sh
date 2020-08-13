@@ -7,6 +7,10 @@ rm -rf /tmp/$1
 rm /root/tools/OneForAll/results/*.txt
 mkdir /tmp/$1
 
+# variables
+domain=$(echo $1 | cut -d'.' -f1)
+extension=$(echo $1 | cut -d'.' -f2)
+
 echo 'running Amass'
 amass enum -d $1 -active -o /tmp/$1/amass.tmp
 
@@ -31,7 +35,9 @@ sed -i '/^$/d' /tmp/$1/results2.tmp
 #remove odd ^M chars causing failure of removal of duplicates
 sed 's/\r//' < /tmp/$1/results2.tmp > /tmp/$1/results3.tmp
 #remove duplicates
-awk '!a[$0]++' /tmp/$1/results3.tmp > /tmp/$1/subdomains.txt
+awk '!a[$0]++' /tmp/$1/results3.tmp > /tmp/$1/results4.tmp
+# remove false positives (non matching domain)
+egrep "\.$domain\.$extension$" results4.tmp > subdomains.txt
 
 RED='\033[0;31m'
 printf ''${RED}'---------------------- ENUMERATED SUBDOMAINS ----------------------\n'
