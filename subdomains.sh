@@ -37,9 +37,14 @@ sed 's/\r//' < /tmp/$1/results2.tmp > /tmp/$1/results3.tmp
 #remove duplicates
 awk '!a[$0]++' /tmp/$1/results3.tmp > /tmp/$1/results4.tmp
 # remove false positives (non matching domain)
-egrep "\.$domain\.$extension$" results4.tmp > subdomains.txt
+egrep "\.$domain\.$extension$" /tmp/$1/results4.tmp > /tmp/$1/subdomains.txt
 
 RED='\033[0;31m'
 printf ''${RED}'---------------------- ENUMERATED SUBDOMAINS ----------------------\n'
 sort -u /tmp/$1/subdomains.txt
 rm /tmp/$1/*.tmp
+
+printf ''${RED}'---------------------- RUNNING HTTPROBE  ----------------------\n'
+cat /tmp/$1/subdomains.txt | /root/go/bin/httprobe -p http:8000 -p http:8080 -p http:8443 -p https:8000 -p https:8080 -p https:8443 -c 50 > /tmp/$1/http-subdomains.txt| tee
+
+printf ''${RED}'---------------------- FINISHED  ----------------------\n'
