@@ -10,13 +10,15 @@ Bash wrapper for multiple subdomain enumeration scripts
 - [Chaos](https://github.com/projectdiscovery/chaos-client) // you'll need an API key
 - [HTTPResponseChecker](https://github.com/bluecanarybe/ResponseChecker)
 
-The script will run all scripts independently, and merge & clean all results in one file. Make sure to set aliasses in your .bashrc or .zshrc file
+The script will run all scripts independently, and merge & clean all results in one file. 
 
 # Usage
 
 ```
 ./subdomains.sh <domain>
 ```
+
+Obviously you will need to fix your paths according to your installation.
 
 # Disclaimer
 
