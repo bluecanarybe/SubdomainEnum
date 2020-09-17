@@ -20,4 +20,4 @@ The script will run all scripts independently, and merge & clean all results in 
 
 # Disclaimer
 
-My code probably sucks but it does the job for me. If you don't like it, go on.
+My code probably sucks but it does the job for me. If you don't like it, go on or create a pull request.
