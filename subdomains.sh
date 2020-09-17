@@ -10,6 +10,7 @@ mkdir /tmp/$1
 # variables
 domain=$(echo $1 | cut -d'.' -f1)
 extension=$(echo $1 | cut -d'.' -f2)
+export CHAOS_KEY="_REDACTED_"
 
 echo 'running Amass'
 amass enum -d $1 -active -o /tmp/$1/amass.tmp
@@ -23,8 +24,11 @@ echo 'running Assetfinder'
 echo 'running OneForAll'
 python3 /root/tools/OneForAll/oneforall.py --target $1 run
 
+echo 'running Chaos'
+/root/go/bin/chaos -d $1 -silent -o /tmp/$1/chaos.tmp
+
 echo 'saving results in one file ...'
-cat /root/tools/OneForAll/results/*.txt /tmp/$1/amass.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
+cat /root/tools/OneForAll/results/*.txt /tmp/$1/amass.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
 
 echo 'cleaning duplicates and showing results ...'
 
@@ -42,9 +46,15 @@ egrep "\.$domain\.$extension$" /tmp/$1/results4.tmp > /tmp/$1/subdomains.txt
 RED='\033[0;31m'
 printf ''${RED}'---------------------- ENUMERATED SUBDOMAINS ----------------------\n'
 sort -u /tmp/$1/subdomains.txt
+
+printf ''${RED}'------------------------ RUNNING HTTPROBE  ------------------------\n'
+cat /tmp/$1/subdomains.txt | /root/go/bin/httprobe -p http:8000 -p http:8080 -p http:8443 -p https:8000 -p https:8080 -p https:8443 -c 50 | tee /tmp/$1/http-subdomains.txt
+
+printf ''${RED}'--------------------- RUNNING RESPONSECHECKER ---------------------\n'
+/root/scripts/ResponseCodeChecker/ResponseCodeChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
+
+# Print only targets with response code 200 + cleanup of tmp files
+cat /tmp/$1/responsecodes.tmp | grep 200 | awk '{ print $1 }' > /tmp/$1/200-OK-urls.txt
 rm /tmp/$1/*.tmp
 
-printf ''${RED}'---------------------- RUNNING HTTPROBE  ----------------------\n'
-cat /tmp/$1/subdomains.txt | /root/go/bin/httprobe -p http:8000 -p http:8080 -p http:8443 -p https:8000 -p https:8080 -p https:8443 -c 50 > /tmp/$1/http-subdomains.txt| tee
-
-printf ''${RED}'---------------------- FINISHED  ----------------------\n'
+printf ''${RED}'---------------------------- FINISHED -----------------------------\n'
