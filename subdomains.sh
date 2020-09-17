@@ -10,7 +10,7 @@ mkdir /tmp/$1
 # variables
 domain=$(echo $1 | cut -d'.' -f1)
 extension=$(echo $1 | cut -d'.' -f2)
-export CHAOS_KEY="_REDACTED_"
+export CHAOS_KEY="_REDACTED_" # add your own API key here https://forms.gle/LkHUjoxAiHE6djtU6
 
 echo 'running Amass'
 amass enum -d $1 -active -o /tmp/$1/amass.tmp
