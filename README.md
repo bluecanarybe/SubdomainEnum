@@ -12,6 +12,12 @@ Bash wrapper for multiple subdomain enumeration scripts
 
 The script will run all scripts independently, and merge & clean all results in one file. Make sure to set aliasses in your .bashrc or .zshrc file
 
+# Usage
+
+```
+./subdomains.sh <domain>
+```
+
 # Disclaimer
 
 My code probably sucks but it does the job for me. If you don't like it, go on.
