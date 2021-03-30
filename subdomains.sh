@@ -3,14 +3,14 @@
 if [ -z "$*" ]; then echo "ERROR: no domain given as argument!"; fi
 
 # prep directory
-rm -rf /tmp/$1
-rm /root/tools/OneForAll/results/*.txt
+rm -rf /tmp/$1 2>/dev/null
+rm -rf /root/tools/OneForAll/results/* 2>/dev/null
 mkdir /tmp/$1
 
 # variables
 domain=$(echo $1 | cut -d'.' -f1)
 extension=$(echo $1 | cut -d'.' -f2)
-export CHAOS_KEY="_REDACTED_" # add your own API key here https://forms.gle/LkHUjoxAiHE6djtU6
+export CHAOS_KEY="56d69d525a018cb7ab1f7f275b99948aead70ad1a7481929e27a92b5782dc1d3"
 
 echo 'running Amass'
 amass enum -d $1 -active -o /tmp/$1/amass.tmp
@@ -28,7 +28,7 @@ echo 'running Chaos'
 /root/go/bin/chaos -d $1 -silent -o /tmp/$1/chaos.tmp
 
 echo 'saving results in one file ...'
-cat /root/tools/OneForAll/results/*.txt /tmp/$1/amass.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
+cat /root/tools/OneForAll/results/temp*.txt /tmp/$1/amass.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
 
 echo 'cleaning duplicates and showing results ...'
 
@@ -51,10 +51,7 @@ printf ''${RED}'------------------------ RUNNING HTTPROBE  ---------------------
 cat /tmp/$1/subdomains.txt | /root/go/bin/httprobe -p http:8000 -p http:8080 -p http:8443 -p https:8000 -p https:8080 -p https:8443 -c 50 | tee /tmp/$1/http-subdomains.txt
 
 printf ''${RED}'--------------------- RUNNING RESPONSECHECKER ---------------------\n'
-/root/scripts/ResponseCodeChecker/ResponseCodeChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
-
-# Print only targets with response code 200 + cleanup of tmp files
+/root/scripts/ResponseChecker/ResponseChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
 cat /tmp/$1/responsecodes.tmp | grep 200 | awk '{ print $1 }' > /tmp/$1/200-OK-urls.txt
 rm /tmp/$1/*.tmp
-
 printf ''${RED}'---------------------------- FINISHED -----------------------------\n'
