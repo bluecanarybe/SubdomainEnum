@@ -11,7 +11,7 @@ Bash wrapper for multiple subdomain enumeration scripts
 - [HTTPResponseChecker](https://github.com/bluecanarybe/ResponseChecker)
 
 The script will run all scripts independently, and merge & clean all results in one file. 
-It does enumeration of secondlevel subdomains such as subdomain.target.example.com
+It also supports enumeration of secondlevel subdomains such as subdomain.target.example.com.
 
 # Installation
 
