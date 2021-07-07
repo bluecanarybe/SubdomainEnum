@@ -21,6 +21,8 @@ RUN go get -u github.com/tomnomnom/httprobe
 
 RUN go get -u github.com/bluecanarybe/ResponseChecker
 
+RUN GO111MODULE=on go get -v github.com/projectdiscovery/httpx/cmd/httpx
+
 ADD subdomains.sh subdomains.sh
 RUN chmod +x subdomains.sh
 

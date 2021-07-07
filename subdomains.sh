@@ -72,5 +72,7 @@ printf ''${RED}'--------------------- RUNNING RESPONSECHECKER ------------------
 /root/go/bin/ResponseChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
 cat /tmp/$1/responsecodes.tmp | grep 200 | awk '{ print $1 }' > /tmp/$1/200-OK-urls.txt
 rm /tmp/$1/*.tmp
+printf ''${RED}'--------------------- RUNNING HTTPX ---------------------\n'
+cat /tmp/$1/subdomains.txt | /root/go/bin/httpx -title -tech-detect -status-code -follow-redirects
 printf ''${RED}'---------------------------- FINISHED -----------------------------\n'
 
