@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 # make sure a domain is given as an argument
 if [ -z "$*" ]; then echo "ERROR: no domain given as argument!"; fi
 
@@ -7,7 +7,7 @@ countdots=$(echo $1 | grep -o "\." | wc -l)
 
 # prep directory
 rm -rf /tmp/$1 2>/dev/null
-rm -rf /root/tools/OneForAll/results/* 2>/dev/null
+rm -rf /var/tmp/OneForAll/results/* 2>/dev/null
 mkdir /tmp/$1
 
 # variables
@@ -22,25 +22,24 @@ else
 echo ''
 fi
 
-export CHAOS_KEY="56d69d525a018cb7ab1f7f275b99948aead70ad1a7481929e27a92b5782dc1d3"
-
 echo 'running Amass'
-amass enum -d $1 -active -o /tmp/$1/amass.tmp
+/root/go/bin/amass enum -d $1 -active -noalts -src -timeout 20 -norecursive -o /tmp/$1/amass1.tmp
+cat /tmp/$1/amass1.tmp | cut -d']' -f 2 | awk '{print $1}' | sort -u > /tmp/$1/amass2.tmp
 
 echo 'running Turbolist3r'
-python3 /root/tools/Turbolist3r/turbolist3r.py -d $1 -o /tmp/$1/turbolist3r.tmp
+python3 /var/tmp/Turbolist3r/turbolist3r.py -d $1 -o /tmp/$1/turbolist3r.tmp
 
 echo 'running Assetfinder'
 /root/go/bin/assetfinder $1 > /tmp/$1/assetfinder.tmp
 
 echo 'running OneForAll'
-python3 /root/tools/OneForAll/oneforall.py --target $1 run
+python3 /var/tmp/OneForAll/oneforall.py --target $1 --brute False run
 
 echo 'running Chaos'
 /root/go/bin/chaos -d $1 -silent -o /tmp/$1/chaos.tmp
 
 echo 'saving results in one file ...'
-cat /root/tools/OneForAll/results/temp/*.txt /tmp/$1/amass.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
+cat /var/tmp/OneForAll/results/temp/*.txt /tmp/$1/amass2.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
 
 echo 'cleaning duplicates and showing results ...'
 
@@ -70,7 +69,8 @@ printf ''${RED}'------------------------ RUNNING HTTPROBE  ---------------------
 cat /tmp/$1/subdomains.txt | /root/go/bin/httprobe -p http:8000 -p http:8080 -p http:8443 -p https:8000 -p https:8080 -p https:8443 -c 50 | tee /tmp/$1/http-subdomains.txt
 
 printf ''${RED}'--------------------- RUNNING RESPONSECHECKER ---------------------\n'
-/root/scripts/ResponseChecker/ResponseChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
+/root/go/bin/ResponseChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
 cat /tmp/$1/responsecodes.tmp | grep 200 | awk '{ print $1 }' > /tmp/$1/200-OK-urls.txt
-#rm /tmp/$1/*.tmp
+rm /tmp/$1/*.tmp
 printf ''${RED}'---------------------------- FINISHED -----------------------------\n'
+
