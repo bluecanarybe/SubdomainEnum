@@ -9,6 +9,7 @@ Bash wrapper for multiple subdomain enumeration scripts
 - [HTTProbe](https://github.com/tomnomnom/httprobe)
 - [Chaos](https://github.com/projectdiscovery/chaos-client) // you'll need an API key
 - [HTTPResponseChecker](https://github.com/bluecanarybe/ResponseChecker)
+- [HTTPX](https://github.com/projectdiscovery/httpx)
 
 The script will run all scripts independently, and merge & clean all results in one file. 
 It also supports enumeration of secondlevel subdomains such as subdomain.target.example.com.
