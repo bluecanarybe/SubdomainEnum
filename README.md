@@ -23,12 +23,12 @@ git clone https://github.com/bluecanarybe/SubdomainEnum.git
 Build the image with Docker
 
 ```
-docker build -t subwrapper .
+docker build -t subdomainenum .
 ```
 
 # Usage via Docker
 
 Run Docker container replacing with your chaos API key as an environment variable and target
 ```
-docker run -e CHAOS_KEY="$API_KEY_HERE" subwrapper ./subdomains.sh target.com
+docker run -e CHAOS_KEY="$API_KEY_HERE"  -v $(pwd):/tmp subdomainenum ./subdomains.sh target.com
 ```
