@@ -33,13 +33,13 @@ echo 'running Assetfinder'
 /root/go/bin/assetfinder $1 > /tmp/$1/assetfinder.tmp
 
 echo 'running OneForAll'
-python3 /var/tmp/OneForAll/oneforall.py --target $1 --fmt txt --brute False run
+python3 /var/tmp/OneForAll/oneforall.py --target $1 --fmt json --brute False run
 
 echo 'running Chaos'
 /root/go/bin/chaos -d $1 -silent -o /tmp/$1/chaos.tmp
 
 echo 'saving results in one file ...'
-cat /var/tmp/OneForAll/results/temp/*.txt /tmp/$1/amass2.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp > /tmp/$1/results1.tmp
+cat /tmp/$1/amass2.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp /var/tmp/OneForAll/results/temp/*.txt > /tmp/$1/results1.tmp
 
 echo 'cleaning duplicates and showing results ...'
 
