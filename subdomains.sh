@@ -38,8 +38,11 @@ python3 /var/tmp/OneForAll/oneforall.py --target $1 --fmt json --brute False run
 echo 'running Chaos'
 /root/go/bin/chaos -d $1 -silent -o /tmp/$1/chaos.tmp
 
+echo 'subfinder'
+/root/go/bin/subfinder -d $1 -o /tmp/$1/subfinder.tmp
+
 echo 'saving results in one file ...'
-cat /tmp/$1/amass2.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp /var/tmp/OneForAll/results/temp/*.txt > /tmp/$1/results1.tmp
+cat /tmp/$1/amass2.tmp /tmp/$1/chaos.tmp /tmp/$1/turbolist3r.tmp /tmp/$1/assetfinder.tmp /tmp/$1/subfinder.tmp /var/tmp/OneForAll/results/temp/*.txt > /tmp/$1/results1.tmp
 
 echo 'cleaning duplicates and showing results ...'
 
@@ -69,10 +72,11 @@ printf ''${RED}'------------------------ RUNNING HTTPROBE  ---------------------
 cat /tmp/$1/subdomains.txt | /root/go/bin/httprobe -p http:8000 -p http:8080 -p http:8443 -p https:8000 -p https:8080 -p https:8443 -c 50 | tee /tmp/$1/http-subdomains.txt
 
 printf ''${RED}'--------------------- RUNNING RESPONSECHECKER ---------------------\n'
-/root/go/bin/ResponseChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.tmp
-cat /tmp/$1/responsecodes.tmp | grep 200 | awk '{ print $1 }' > /tmp/$1/200-OK-urls.txt
-rm /tmp/$1/*.tmp
+/root/go/bin/ResponseChecker /tmp/$1/http-subdomains.txt | tee /tmp/$1/responsecodes.txt
+cat /tmp/$1/responsecodes.txt | grep 200 | awk '{ print $1 }' > /tmp/$1/200-OK-urls.txt
 printf ''${RED}'--------------------- RUNNING HTTPX ---------------------\n'
-cat /tmp/$1/subdomains.txt | /root/go/bin/httpx -title -tech-detect -status-code -follow-redirects
+cat /tmp/$1/subdomains.txt | /root/go/bin/httpx -title -tech-detect -status-code -follow-redirects > /tmp/$1/httpx.txt | tee
+cat /tmp/$1/httpx.txt
 printf ''${RED}'---------------------------- FINISHED -----------------------------\n'
 
+rm /tmp/$1/*.tmp
