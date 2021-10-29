@@ -23,6 +23,10 @@ RUN go get -u github.com/bluecanarybe/ResponseChecker
 
 RUN GO111MODULE=on go get -v github.com/projectdiscovery/httpx/cmd/httpx
 
+RUN go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+
+RUN mkdir -p /root/.config/subfinder
+ADD config.yaml /root/.config/subfinder/config.yaml
 ADD subdomains.sh subdomains.sh
 RUN chmod +x subdomains.sh
 
